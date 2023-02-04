@@ -62,7 +62,7 @@ function MONGODBCONNECTION() {
 
 routers.post("/lessons", (req, res, next) => {
   let SERVERREQUEST = MONGODBCONNECTION();
-  createProduct(SERVERREQUEST, req.body)
+  CreateLESSONS(SERVERREQUEST, req.body)
     .then((msg) => {
       res.send("Created Successfully");
     })
@@ -94,7 +94,7 @@ routers.delete("/lessons/:id", (req, res) => {
 
 routers.post("/orders", (req, res, next) => {
   let SERVERREQUEST = MONGODBCONNECTION();
-  createOrder(SERVERREQUEST, req.body)
+  OrderCreationMethod(SERVERREQUEST, req.body)
     .then((msg) => {
       if (msg) {
         res.send(`Successfully Created`);
@@ -150,33 +150,7 @@ async function SeacrhByName(SERVERREQUEST, searchedText) {
   return serachRESULT;
 }
 
-async function createProduct(SERVERREQUEST, newListing) {
-  const result = await SERVERREQUEST.db("test")
-    .collection("lessonsItems")
-    .insertOne(newListing);
-  return result;
-}
 
-async function createOrder(server, SERVERREQUEST) {
-  let serverData = server.db("test").collection("orders");
-  let lessonSelected = await server
-    .db("test")
-    .collection("lessonsItems")
-    .findOne({
-      _id: new ObjectId(SERVERREQUEST.lessonId),
-    });
-  let id = lessonSelected._id.toString();
-  if (lessonSelected.space) {
-    lessonSelected.space = lessonSelected.space - 1;
-    serverData.insertOne(SERVERREQUEST);
-    LessonUpdate(server, id, lessonSelected)
-      .then((data) => {})
-      .catch((error) => {});
-    return true;
-  } else {
-    return false;
-  }
-}
 
 async function deleteOrders(SERVERREQUEST, id) {
   await SERVERREQUEST.db("test")
@@ -189,7 +163,7 @@ async function deleteOrders(SERVERREQUEST, id) {
 
 
 
-routers.post("/search", (req, res, next) => {
+routers.post("/search", (req, res, nextss) => {
     let SERVERREQUEST = MONGODBCONNECTION();
     SeacrhByName(SERVERREQUEST, req.body.text)
       .then((data) => {
@@ -227,6 +201,38 @@ async function DeleteLessons(SERVERREQUEST, id) {
     });
   return result;
 }
+
+
+async function CreateLESSONS(SERVERREQUEST, newListing) {
+    const result = await SERVERREQUEST.db("test")
+      .collection("lessonsItems")
+      .insertOne(newListing);
+    return result;
+  }
+  
+
+async function OrderCreationMethod(server, SERVERREQUEST) {
+    let serverData = server.db("test").collection("orders");
+    let lessonSelected = await server
+      .db("test")
+      .collection("lessonsItems")
+      .findOne({
+        _id: new ObjectId(SERVERREQUEST.lessonId),
+      });
+    let id = lessonSelected._id.toString();
+    if (lessonSelected.space) {
+      lessonSelected.space = lessonSelected.space - 1;
+      serverData.insertOne(SERVERREQUEST);
+      LessonUpdate(server, id, lessonSelected)
+        .then((data) => {})
+        .catch((error) => {
+            console.log('error')
+        });
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 const StaticIMAGEMiddleware = (req, res) => {
     const imagepath = path.join(__dirname, "image-lesson", req.url);
