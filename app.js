@@ -60,8 +60,8 @@ function MONGODBCONNECTION() {
 routers.post("/lessons", (req, res, next) => {
   let SERVERREQUEST = MONGODBCONNECTION();
   CreateLESSONS(SERVERREQUEST, req.body)
-    .then((msg) => {
-      res.send("Created Successfully");
+    .then((RESPONSE) => {
+      res.send("Successfully updated the data");
     })
     .catch((error) => {
       res.status(404).send("ERRORSS");
@@ -80,7 +80,7 @@ routers.get("/orders", (req, res, next) => {
 routers.delete("/lessons/:id", (req, res) => {
     let SERVERREQUEST = MONGODBCONNECTION();
     DeleteLessons(SERVERREQUEST, req.params.id)
-    .then((msg) => {
+    .then((RESPONSE) => {
       res.send(`deleted successfully`);
     })
     .catch((error) => {
@@ -98,7 +98,7 @@ async function AllDatabase(product) {
     if (db) {
       return db;
     } else {
-      const message = `no data`;
+      const message = `NO CONTENT`;
       return message;
     }
 }
@@ -106,15 +106,12 @@ async function AllDatabase(product) {
 routers.post("/orders", (req, res, next) => {
   let SERVERREQUEST = MONGODBCONNECTION();
   OrderCreationMethod(SERVERREQUEST, req.body)
-    .then((msg) => {
-        if (msg) {
+    .then((RESPONSE) => {
+        if (RESPONSE) {
         res.send(`Successfully Created`);
     } else {
         res.status(404).send(`${req.body.lessonName}  out of stock`);
       }
-    })
-    .catch((error) => {
-        res.status(404).send("ERROR");
     });
 });
 
@@ -123,7 +120,7 @@ async function getOrderList(product) {
   if (db) {
       return db;
     } else {
-        const message = `Sorry no data available`;
+        const message = `Sorry NO CONTENT available`;
     return message;
 }
 }
@@ -132,7 +129,7 @@ routers.put("/lessons/:id", (req, res) => {
     let SERVERREQUEST = MONGODBCONNECTION();
   LessonUpdate(SERVERREQUEST, req.params.id, req.body)
     .then((data) => {
-      res.send(`updated Successfully`);
+      res.send(`Successfully updated the data`);
     })
     .catch((error) => {
         res.status(404).send(error);
@@ -142,7 +139,7 @@ routers.put("/lessons/:id", (req, res) => {
 routers.delete("/orders", (req, res) => {
     let SERVERREQUEST = MONGODBCONNECTION();
     deleteOrders(SERVERREQUEST, req.params.id)
-    .then((msg) => {
+    .then((RESPONSE) => {
         res.send(`deleted successfully`);
     })
     .catch((error) => {
