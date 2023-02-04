@@ -68,7 +68,7 @@ routers.post("/lessons", (req, res, next) => {
     });
 });
 
-app.use("/image-lesson", StaticIMAGEMiddleware);
+
 
 routers.get("/orders", (req, res, next) => {
     let SERVERREQUEST = MONGODBCONNECTION();
@@ -79,7 +79,7 @@ routers.get("/orders", (req, res, next) => {
 
 routers.delete("/lessons/:id", (req, res) => {
     let SERVERREQUEST = MONGODBCONNECTION();
-    DeleteLessons(SERVERREQUEST, req.params.id)
+    DELETETHELessons(SERVERREQUEST, req.params.id)
     .then((RESPONSE) => {
       res.send(`deleted successfully`);
     })
@@ -87,6 +87,15 @@ routers.delete("/lessons/:id", (req, res) => {
       res.status(404).send(error);
     });
 });
+
+async function DELETETHELessons(SERVERREQUEST, id) {
+    const result = await SERVERREQUEST.db("test")
+    .collection("lessonsItems")
+    .deleteOne({ _id: new ObjectId(id) }, (err, result) => {
+        SERVERREQUEST.close();
+    });
+  return result;
+}
 
 
 async function AllDatabase(product) {
@@ -187,14 +196,7 @@ async function LessonUpdate(SERVERREQUEST, id, newData) {
     return result;
 }
 
-async function DeleteLessons(SERVERREQUEST, id) {
-    const result = await SERVERREQUEST.db("test")
-    .collection("lessonsItems")
-    .deleteOne({ _id: new ObjectId(id) }, (err, result) => {
-        SERVERREQUEST.close();
-    });
-  return result;
-}
+
 
 async function CreateLESSONS(SERVERREQUEST, newListing) {
     const result = await SERVERREQUEST.db("test")
@@ -236,7 +238,7 @@ const StaticIMAGEMiddleware = (req, res) => {
     fs.createReadStream(imagepath).pipe(res);
   });
 };
-
+app.use("/image-lesson", StaticIMAGEMiddleware);
 MAINfunction().catch(console.error);
 app.use(LOGGERmidleware);
 app.use("/", routers);
